@@ -61,10 +61,13 @@ import Record from '../components/record';
 import NotifyNear from '../components/notifyNear';
 import Settings from '../components/settings';
 
+import Firebase from '../Firebase';
+
 export default function App() {
+  const {currentUser} = Firebase.auth();
   return (
     <View>
-      <Greeting />
+      <Greeting name={currentUser.email}/>
       <Settings />
       <View style={styles.container}>
       <FakeCall />

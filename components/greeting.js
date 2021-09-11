@@ -1,10 +1,11 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native';
 
-function Greeting() {
+function Greeting({name}) {
+    const n= name.split("@")[0]
     return (
         <View>
-            <Text style={styles.greet}>Hi, Jane</Text>
+            <Text style={styles.greet}>Hi, {n}</Text>
         </View>
     )
 }

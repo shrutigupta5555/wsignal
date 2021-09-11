@@ -15,6 +15,7 @@ import HomeScreen from './screens/Home';
 import SignUp from './screens/SignUp';
 
 import mainContext from './context/mainContext';
+import Profile from './screens/Profile';
 
 const App = () => {
   const AppStack = createStackNavigator();
@@ -85,6 +86,11 @@ const App = () => {
                 <AppStack.Screen
                   name="Home"
                   component={HomeScreen}
+                  options={{ headerShown: false }}
+                />
+                <AppStack.Screen
+                  name="Profile"
+                  component={Profile}
                   options={{ headerShown: false }}
                 />
               </>
