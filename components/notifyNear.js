@@ -9,39 +9,44 @@ import {useNavigation} from '@react-navigation/native'
 function NotifyNear() {
 
     const navigation = useNavigation()
+    const help = () => {
+        navigation.navigate('NotifyPeople')
+    }
 
     const [isModalVisible, setIsModalVisible] = React.useState(false);
 
     const handleModal = () => setIsModalVisible(() => !isModalVisible);
 
     return (
-        
-        <View style={styles.box} >
-            <FontAwesome size={35} style={styles.icon} onPress={handleModal} name='info-circle' />
-            
-            <Modal isVisible={isModalVisible}>
-            <Modal.Container>
-                <Modal.Header  title="Notify Nearby" >
-                </Modal.Header>
-                <Modal.Body>
-                <Text style={styles.text}>Notifies people around you who have the app of your location, and one emergency contact's phone number and name.</Text>
-                </Modal.Body>
-                <Modal.Footer>
-                <Button title="Done" onPress={handleModal} />
-                </Modal.Footer>
-            </Modal.Container>
-            </Modal>
-           
+        <Pressable onPress={help}>
 
-            <View>
-                <Text style={styles.text}>Notify</Text>
-                <Text style={styles.text}>Nearby</Text>
+            <View style={styles.box} >
+                <FontAwesome size={35} style={styles.icon} onPress={handleModal} name='info-circle' />
+                
+                <Modal isVisible={isModalVisible}>
+                <Modal.Container>
+                    <Modal.Header  title="Notify Nearby" > 
+                    </Modal.Header>
+                    <Modal.Body>
+                    <Text style={styles.text}>Notifies people around you who have the app of your location, and one emergency contact's phone number and name.</Text>
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <Button title="Done" onPress={handleModal} />
+                    </Modal.Footer>
+                </Modal.Container>
+                </Modal>
+               
+    
+                <View>
+                    <Text style={styles.text}>Notify</Text>
+                    <Text style={styles.text}>Nearby</Text>
+                </View>
+                
+               
+      
             </View>
-            
            
-  
-        </View>
-       
+        </Pressable>
         
     )
 }
