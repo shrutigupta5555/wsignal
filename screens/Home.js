@@ -25,22 +25,28 @@ export default function App() {
   const [lat, setlat] = useState(null)
   const [lnh, setlnh] = useState(null)
   const [loc, setloc] = useState("")
+ 
   const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
-    'Wait, we are fetching you location...'
+    ''
   );
 
   useEffect(() => {
     CheckIfLocationEnabled();
     GetCurrentLocation().then(() => {
-      const db = Firebase.firestore();
-      const docRef = db.collection('users').doc(currentUser.email)
-      
-      docRef.update({
-        lat: lat,
-        lng : lnh,
-        loc : loc,
-        address: displayCurrentAddress
-      })
+      if(lat && lnh && loc){
+
+        const db = Firebase.firestore();
+        const docRef = db.collection('users').doc(currentUser.email)
+
+       
+        
+        docRef.update({
+          lat: lat,
+          lng : lnh,
+          loc : loc,
+          address: displayCurrentAddress
+        })
+      }
     })
   }, []);
 
@@ -61,7 +67,7 @@ export default function App() {
   };
 
   const GetCurrentLocation = async () => {
-    let { status } = await Location.requestPermissionsAsync();
+    let { status } = await Location.requestBackgroundPermissionsAsync();
 
     if (status !== 'granted') {
       Alert.alert(
@@ -111,7 +117,7 @@ export default function App() {
       <Police />
       <Record />
       <NotifyNear/>
-      <NotifyLove lat={lat} lng={lnh} address={displayCurrentAddress}/>
+      <NotifyLove lat={lat} lng={lnh} address={displayCurrentAddress} currentUser={currentUser}/>
       <StatusBar style="auto" />
       </ScrollView>
     </View>

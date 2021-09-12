@@ -21,6 +21,7 @@ export default function App() {
   const [toNotify, settoNotify] = useState([])
   const [name, setname] = useState("")
   const [loc, setloc] = useState("Delhi")
+  const [address, setaddress] = useState("Delhi")
 
   useEffect(() => {
     setcurrentUser(Firebase.auth())
@@ -56,6 +57,7 @@ export default function App() {
                   console.log(doc.data(), doc.data().name, "======================")
                   setname(doc.data().name)
                   setloc(doc.data().loc)
+                  setaddress(doc.data().address)
               })
       
 
@@ -63,9 +65,9 @@ export default function App() {
 
   async function sendPushNotification() {
     const db = Firebase.firestore()
-   
+        console.log(loc, "line68")
         db.collection("users")
-        .where('loc', "==", loc)
+        .where('loc', "==", `${loc}`)
         .get()
         .then((querySnapshot) => {
             const temp = []
@@ -80,7 +82,7 @@ export default function App() {
             for(let i=0; i < temp.length; i++){
                 let t = temp[i].token
                 console.log("-=-=-=-=-", name)
-                sendNotif(t, name)
+                sendNotif(t, name, loc, address)
             }
         })
         .catch((error) => {
@@ -113,7 +115,7 @@ export default function App() {
 }
 
 // Can use this function below, OR use Expo's Push Notification Tool-> https://expo.dev/notifications
-async function sendNotif(expoPushToken, name) {
+async function sendNotif(expoPushToken, name,loc, address) {
 
 
 
@@ -123,8 +125,8 @@ async function sendNotif(expoPushToken, name) {
     to: expoPushToken,
     sound: 'default',
     title: `${name} needs help!`,
-    body: 'Location : Mumbai',
-    data: { someData: 'goes here' },
+    body: `Location : ${loc}`,
+    data: {'complete address' : address },
   };
 
   await fetch('https://exp.host/--/api/v2/push/send', {
