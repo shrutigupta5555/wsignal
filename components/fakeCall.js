@@ -1,16 +1,38 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, Button, Pressable } from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Modal } from "./popup";
+import { Audio } from 'expo-av';
 
 function FakeCall() {
+    const [sound, setSound] = React.useState();
 
     const [isModalVisible, setIsModalVisible] = React.useState(false);
 
     const handleModal = () => setIsModalVisible(() => !isModalVisible);
 
+    async function playSound() {
+        
+        const {sound} = await Audio.Sound.createAsync(
+            require('../assets/fake.mp3')
+        )
+
+        setSound(sound);
+        console.log("inside")
+        await sound.playAsync();
+    }
+
+    
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync(); }
+      : undefined;
+  }, [sound]);
+
     return (
-        <Pressable onPress={() => console.log("hdiue2jn")}>
+        <Pressable onPress={playSound}>
 
         
         <View style={styles.box}>
