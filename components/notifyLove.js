@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Button } from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Modal } from "./popupNotifyFamily";
 
-function NotifyLove() {
+function NotifyLove({lat, lng, address}) {
 
     const [isModalVisible, setIsModalVisible] = React.useState(false);
 

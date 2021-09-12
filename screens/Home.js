@@ -1,56 +1,6 @@
-// import React, { useContext } from 'react';
-// import { View, StyleSheet, Button, Text } from 'react-native';
-// // import { Text, Button, Title, Paragraph } from 'react-native-paper';
-// import mainContext from '../context/mainContext';
-// import Firebase from '../Firebase';
-
-// const HomeScreen = () => {
-//   const { currentUser } = Firebase.auth(); //we are getting the user from Firebase
-
-//   const { signOutUser } = useContext(mainContext); //we are getting these functions from the context so that can be used here
- 
-
-//   return (
-//     <View style={styles.container}>
-//       <View style={styles.box}>
-//         <Text>HomeScreen </Text>
-//       </View>
-//       <View style={styles.box}>
-//         <Text>{currentUser.email}</Text>
-//       </View>
-//       <View style={styles.box}>
-//         <Button onPress={() => signOutUser()} mode="contained" icon="logout" title="sign out">
-//           Sign Out
-//         </Button>
-//       </View>
-     
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   inputContainer: {
-//     width: '80%',
-//     marginBottom: 20,
-//   },
-//   container: {
-//     flex: 1,
-//     //backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   box: {
-//     marginBottom: 20,
-//   },
-// });
-
-// export default HomeScreen;
-
-
-
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image, Alert, ScrollView } from 'react-native';
 
 import Greeting from '../components/greeting';
 import FakeCall from '../components/fakeCall';
@@ -63,12 +13,95 @@ import Settings from '../components/settings';
 
 import Firebase from '../Firebase';
 
+import * as Location from 'expo-location';
+import {useNavigation} from '@react-navigation/native'
+
 export default function App() {
   const {currentUser} = Firebase.auth();
+
+  const navigation = useNavigation()
+
+  const [locationServiceEnabled, setLocationServiceEnabled] = useState(false);
+  const [lat, setlat] = useState(null)
+  const [lnh, setlnh] = useState(null)
+  const [loc, setloc] = useState("")
+  const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
+    'Wait, we are fetching you location...'
+  );
+
+  useEffect(() => {
+    CheckIfLocationEnabled();
+    GetCurrentLocation().then(() => {
+      const db = Firebase.firestore();
+      const docRef = db.collection('users').doc(currentUser.email)
+      
+      docRef.update({
+        lat: lat,
+        lng : lnh,
+        loc : loc,
+        address: displayCurrentAddress
+      })
+    })
+  }, []);
+
+
+  const CheckIfLocationEnabled = async () => {
+    let enabled = await Location.hasServicesEnabledAsync();
+
+    if (!enabled) {
+      Alert.alert(
+        'Location Service not enabled',
+        'Please enable your location services to continue',
+        [{ text: 'OK' }],
+        { cancelable: false }
+      );
+    } else {
+      setLocationServiceEnabled(enabled);
+    }
+  };
+
+  const GetCurrentLocation = async () => {
+    let { status } = await Location.requestPermissionsAsync();
+
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permission not granted',
+        'Allow the app to use location service.',
+        [{ text: 'OK' }],
+        { cancelable: false }
+      );
+    }
+
+    let { coords } = await Location.getCurrentPositionAsync();
+
+    if (coords) {
+      const { latitude, longitude } = coords;
+      setlat(latitude)
+      setlnh(longitude)
+      let response = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude
+      });
+
+      for (let item of response) {
+        // console.log(item)
+        let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
+        setloc(item.name)
+        setDisplayCurrentAddress(address);
+
+       
+      }
+    }
+  };
+
+
+
+
   return (
     <View style={styles.Div}>
 
       <ScrollView>
+      
 
       <Greeting name={currentUser.email}/>
       <Settings />
@@ -77,8 +110,8 @@ export default function App() {
       <ShareLoc />
       <Police />
       <Record />
-      <NotifyNear />
-      <NotifyLove />
+      <NotifyNear/>
+      <NotifyLove lat={lat} lng={lnh} address={displayCurrentAddress}/>
       <StatusBar style="auto" />
       </ScrollView>
     </View>
