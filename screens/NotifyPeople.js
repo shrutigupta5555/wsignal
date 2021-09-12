@@ -19,9 +19,12 @@ export default function App() {
   const responseListener = useRef();
   const [currentUser, setcurrentUser] = useState(null);
   const [toNotify, settoNotify] = useState([])
+  const [name, setname] = useState("")
+  const [loc, setloc] = useState("Delhi")
 
   useEffect(() => {
     setcurrentUser(Firebase.auth())
+    getName()
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     // This listener is fired whenever a notification is received while the app is foregrounded
@@ -40,29 +43,49 @@ export default function App() {
     };
   }, []);
 
+  async function getName() {
+      
+         console.log(currentUser, "line 47")
+          const db = Firebase.firestore();
+      
+          const docref = db.collection('users').doc(currentUser.currentUser.email)
+          console.log(currentUser.currentUser.email, "line 51 ====================")
+          docref
+              .get()
+              .then(doc => {
+                  console.log(doc.data(), doc.data().name, "======================")
+                  setname(doc.data().name)
+                  setloc(doc.data().loc)
+              })
+      
+
+  }
 
   async function sendPushNotification() {
     const db = Firebase.firestore()
-    db.collection("users")
-    .get()
-    .then((querySnapshot) => {
-        const temp = []
-        querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            // console.log(doc.id, " => ", doc.data());
-            temp.push(doc.data())
+   
+        db.collection("users")
+        .where('loc', "==", loc)
+        .get()
+        .then((querySnapshot) => {
+            const temp = []
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                // console.log(doc.id, " => ", doc.data());
+                temp.push(doc.data())
+            });
+    
+            settoNotify(temp)
+            
+            for(let i=0; i < temp.length; i++){
+                let t = temp[i].token
+                console.log("-=-=-=-=-", name)
+                sendNotif(t, name)
+            }
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
         });
-
-        settoNotify(temp)
-        
-        for(let i=0; i < temp.length; i++){
-            let t = temp[i].token
-            sendNotif(t)
-        }
-    })
-    .catch((error) => {
-        console.log("Error getting documents: ", error);
-    });
   }
 
   return (
@@ -90,17 +113,17 @@ export default function App() {
 }
 
 // Can use this function below, OR use Expo's Push Notification Tool-> https://expo.dev/notifications
-async function sendNotif(expoPushToken) {
+async function sendNotif(expoPushToken, name) {
 
 
 
-
+ 
 
   const message = {
     to: expoPushToken,
     sound: 'default',
-    title: 'Original Title',
-    body: 'And here is the body!',
+    title: `${name} needs help!`,
+    body: 'Location : Mumbai',
     data: { someData: 'goes here' },
   };
 
