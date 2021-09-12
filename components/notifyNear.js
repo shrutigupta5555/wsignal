@@ -1,17 +1,24 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Button } from 'react-native'
+import { View, Text, StyleSheet, Button, Pressable } from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Modal } from "./popupNotifyNear";
 
+import {useNavigation} from '@react-navigation/native'
+
+
 function NotifyNear() {
+
+    const navigation = useNavigation()
 
     const [isModalVisible, setIsModalVisible] = React.useState(false);
 
     const handleModal = () => setIsModalVisible(() => !isModalVisible);
 
     return (
-        <View style={styles.box}>
+        
+        <View style={styles.box} >
             <FontAwesome size={35} style={styles.icon} onPress={handleModal} name='info-circle' />
+            
             <Modal isVisible={isModalVisible}>
             <Modal.Container>
                 <Modal.Header  title="Notify Nearby" >
@@ -24,9 +31,18 @@ function NotifyNear() {
                 </Modal.Footer>
             </Modal.Container>
             </Modal>
-            <Text style={styles.text}>Notify</Text>
-            <Text style={styles.text}>Nearby</Text>
+           
+
+            <View>
+                <Text style={styles.text}>Notify</Text>
+                <Text style={styles.text}>Nearby</Text>
+            </View>
+            
+           
+  
         </View>
+       
+        
     )
 }
 
@@ -53,5 +69,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 30,
         color: '#fff'
+    },
+    dB : {
+        backgroundColor: 'pink'
     }
+    
 })

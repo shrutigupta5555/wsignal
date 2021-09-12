@@ -16,6 +16,7 @@ import SignUp from './screens/SignUp';
 
 import mainContext from './context/mainContext';
 import Profile from './screens/Profile';
+import NotifyPeople from './screens/NotifyPeople';
 
 const App = () => {
   const AppStack = createStackNavigator();
@@ -91,6 +92,11 @@ const App = () => {
                 <AppStack.Screen
                   name="Profile"
                   component={Profile}
+                  options={{ headerShown: false }}
+                />
+                <AppStack.Screen
+                  name="NotifyPeople"
+                  component={NotifyPeople}
                   options={{ headerShown: false }}
                 />
               </>

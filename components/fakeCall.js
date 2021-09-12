@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Button } from 'react-native'
+import { View, Text, StyleSheet, Button, Pressable } from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Modal } from "./popup";
 
@@ -10,6 +10,9 @@ function FakeCall() {
     const handleModal = () => setIsModalVisible(() => !isModalVisible);
 
     return (
+        <Pressable onPress={() => console.log("hdiue2jn")}>
+
+        
         <View style={styles.box}>
             <FontAwesome size={35} style={styles.icon} onPress={handleModal} name='info-circle' />
             <Modal isVisible={isModalVisible}>
@@ -27,6 +30,7 @@ function FakeCall() {
             <Text style={styles.text}>Fake</Text>
             <Text style={styles.text}>Call</Text>
         </View>
+        </Pressable>
     )
 }
 

@@ -50,7 +50,7 @@
 
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 
 import Greeting from '../components/greeting';
 import FakeCall from '../components/fakeCall';
@@ -66,31 +66,34 @@ import Firebase from '../Firebase';
 export default function App() {
   const {currentUser} = Firebase.auth();
   return (
-    <View>
+    <View style={styles.Div}>
+
+      <ScrollView>
+
       <Greeting name={currentUser.email}/>
       <Settings />
-      <View style={styles.container}>
+   
       <FakeCall />
       <ShareLoc />
-      </View>
-      <View style={styles.container}>
       <Police />
       <Record />
-      </View>
-      <View style={styles.container}>
       <NotifyNear />
       <NotifyLove />
-      </View>
       <StatusBar style="auto" />
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  Div : {
+    padding: 3
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
     display: 'flex',
     flexDirection: 'row'
   },
+ 
 });
